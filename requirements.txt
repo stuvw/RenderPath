@@ -1,0 +1,5 @@
+numpy
+PyOpenGL
+matplotlib
+tqdm
+psutil
