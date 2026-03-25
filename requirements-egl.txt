@@ -1,0 +1,4 @@
+numpy
+PyOpenGL
+matplotlib
+tqdm
