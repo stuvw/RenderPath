@@ -11,18 +11,18 @@ from PyQt5.QtWidgets import (
     QLabel, QPushButton, QDoubleSpinBox, QSpinBox, QComboBox,
     QFileDialog, QGroupBox, QStatusBar, QToolBar,
     QProgressBar, QScrollArea, QCheckBox, QSlider, 
-    QSizePolicy, QFrame, QMessageBox
+    QSizePolicy, QFrame, QMessageBox, QColorDialog
 )
 from PyQt5.QtCore import Qt, QTimer, QSize
-from PyQt5.QtGui import QColor
-
-from .helpers import section_label, file_picker_row, color_button
-from .mem import _fmt_bytes, query_system_memory, estimate_load_memory, query_vram
-from .palette import C, SS
+from PyQt5.QtGui import QColor, QSurfaceFormat
 
 from OpenGL.GL import *
-from .math import look_at, perspective
-from .preview import VolumeGLWidget
+
+from qt_renderer.helpers import section_label, file_picker_row, color_button
+from qt_renderer.mem import _fmt_bytes, query_system_memory, estimate_load_memory, query_vram
+from qt_renderer.palette import C, SS
+from qt_renderer.math import look_at, perspective
+from qt_renderer.preview import VolumeGLWidget
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Main window
@@ -466,7 +466,6 @@ class MainWindow(QMainWindow):
             self.frame_label.setText(f"FRAME  {idx} / {n - 1}")
 
     def _pick_color(self, which):
-        from PyQt5.QtWidgets import QColorDialog
         current = self._under_rgba if which == "under" else self._over_rgba
         r,g,b,a = [int(v*255) for v in current]
         init = QColor(r,g,b,a)
@@ -718,7 +717,6 @@ class MainWindow(QMainWindow):
 
 def main():
     # Request OpenGL 3.3 Core
-    from PyQt5.QtGui import QSurfaceFormat
     fmt = QSurfaceFormat()
     fmt.setVersion(3, 3)
     fmt.setProfile(QSurfaceFormat.CoreProfile)

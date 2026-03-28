@@ -8,9 +8,9 @@ from PyQt5.QtCore import pyqtSignal
 from OpenGL.GL import *
 from OpenGL.GL import shaders
 
-from .math import perspective, look_at
-from .mem import query_vram
-from .shaders import VERTEX_SHADER_DEPTH, FRAGMENT_SHADER_DEPTH, SCREEN_VERTEX_SHADER, SCREEN_FRAGMENT_SHADER
+from qt_renderer.math import perspective, look_at
+from qt_renderer.mem import query_vram
+from qt_renderer.shaders import VERTEX_SHADER_DEPTH, FRAGMENT_SHADER_DEPTH, SCREEN_VERTEX_SHADER, SCREEN_FRAGMENT_SHADER
 
 # ══════════════════════════════════════════════════════════════════════════════
 # OpenGL preview widget

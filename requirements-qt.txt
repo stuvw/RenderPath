@@ -1,2 +1,5 @@
+numpy
+PyOpenGL
+matplotlib
 pyqt5
 psutil

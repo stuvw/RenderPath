@@ -1,5 +1,5 @@
-from .args import parse_args
-from .render import render
+from egl_renderer.args import parse_args
+from egl_renderer.render import render
 
 # ---------------- ENTRY ----------------
 

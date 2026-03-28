@@ -68,7 +68,7 @@ uniform float maxVal;
 
 uniform vec4 underColor;
 uniform vec4 overColor;
-// uniform vec4 badColor;
+uniform vec4 badColor;
 
 out vec4 FragColor;
 
@@ -77,11 +77,10 @@ void main() {
     float qw = data.r;
     float w  = data.g;
 
-    if (w == 0.0) discard;
-    //{
-    //    FragColor = badColor;
-    //    return;
-    //}
+    if (w == 0.0) {
+        FragColor = badColor;
+        return;
+    }
 
     const float INV_LOG10 = 0.4342944819;
     float depth = log(qw / w) * INV_LOG10;

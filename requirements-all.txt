@@ -2,4 +2,5 @@ numpy
 PyOpenGL
 matplotlib
 tqdm
+pyqt5
 psutil

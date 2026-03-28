@@ -1,7 +1,6 @@
 import subprocess
 from time import time
 import ctypes
-import os
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
@@ -9,22 +8,22 @@ from tqdm import tqdm
 from OpenGL.GL import *
 from OpenGL.GL import shaders
 
-from .context import create_egl_context
-from .shaders import (
-    SCREEN_FRAGMENT_SHADER, 
-    SCREEN_VERTEX_SHADER, 
-    VERTEX_SHADER_DEPTH, 
+from egl_renderer.context import create_egl_context
+from egl_renderer.shaders import (
+    SCREEN_FRAGMENT_SHADER,
+    SCREEN_VERTEX_SHADER,
+    VERTEX_SHADER_DEPTH,
     FRAGMENT_SHADER_DEPTH
 )
-from .geometry import setup_cube, setup_quad
-from .utils import perspective, look_at
+from egl_renderer.geometry import setup_cube, setup_quad
+from egl_renderer.utils import perspective, look_at
 
 # ---------------- MAIN RENDER ----------------
 
 def render(width, height, framerate,
            data_file, camera_file, video_file,
-           minVal, maxVal,
-           underColor, overColor, badColor, colormap
+           min_val, max_val,
+           under_color, over_color, bad_color, colormap
            ):
 
     create_egl_context(width, height) # Remove this line, Earth blows up
@@ -245,12 +244,12 @@ def render(width, height, framerate,
         glBindTexture(GL_TEXTURE_2D, cmap_tex)
         glUniform1i(glGetUniformLocation(screen_prog, "colormap"), 1)
 
-        glUniform1f(glGetUniformLocation(screen_prog,"minVal"), minVal)
-        glUniform1f(glGetUniformLocation(screen_prog,"maxVal"), maxVal)
-        glUniform4f(glGetUniformLocation(screen_prog,"underColor"), *underColor)
-        glUniform4f(glGetUniformLocation(screen_prog,"overColor"), *overColor)
-        # glUniform4f(glGetUniformLocation(screen_prog,"badColor"), *badColor)
-        # Debugging, re-enable in shader too
+        glUniform1f(glGetUniformLocation(screen_prog,"minVal"), min_val)
+        glUniform1f(glGetUniformLocation(screen_prog,"maxVal"), max_val)
+        glUniform4f(glGetUniformLocation(screen_prog,"underColor"), *under_color)
+        glUniform4f(glGetUniformLocation(screen_prog,"overColor"), *over_color)
+        glUniform4f(glGetUniformLocation(screen_prog,"badColor"), *bad_color) # useful for debugging
+        
 
         glBindVertexArray(quad_vao)
         glDrawArrays(GL_TRIANGLE_STRIP,0,4)
