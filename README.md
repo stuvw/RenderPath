@@ -1,5 +1,7 @@
 # RenderPath
 
+[Example image](./examples/images/ex_img_2.png)
+
 GPU-accelerated volume renderer for large particle/AMR datasets. Renders fly-through videos along a camera path using OpenGL instanced drawing and a two-pass depth-accumulation / tone-mapping pipeline.
 
 Three entry points, one workflow:
@@ -54,7 +56,7 @@ px py pz   cx cy cz   nx ny nz
 ```
 px py pz   fx fy fz
 ```
-`(fx, fy, fz)` is the forward/zenith direction — the centre of the fisheye circle. It need not be unit length. Some common setups:
+`(fx, fy, fz)` is the forward/zenith direction — the centre of the fisheye circle. It need not be unit length.
 
 **`egl_renderer_vr` — VR360 mode** — three floats per row (position only; all directions are captured):
 ```
@@ -84,7 +86,7 @@ px py pz
 
 **Change directory into repo:**
 
-`cd NeoPathGen`
+`cd RenderPath`
 
 **Create a Python virtual environment:**
 
