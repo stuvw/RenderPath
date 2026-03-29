@@ -12,11 +12,11 @@ def main():
         data_file=args.data_file,
         camera_file=args.camera_file,
         video_file=args.video_file,
-        minVal=args.minval,
-        maxVal=args.maxval,
-        underColor=args.undercolor,
-        overColor=args.overcolor,
-        badColor=args.badcolor,
+        min_val=args.minval,
+        max_val=args.maxval,
+        under_color=args.undercolor,
+        over_color=args.overcolor,
+        bad_color=args.badcolor,
         colormap=args.colormap
     )
 

@@ -1,6 +1,10 @@
 # RenderPath
 
-[Example image](./examples/images/ex_img_2.png)
+<br>
+
+<img src="./examples/images/ex_img_2.png" alt="Qt renderer example" style="width: 70%; margin: auto; display: block;"/>
+
+<br>
 
 GPU-accelerated volume renderer for large particle/AMR datasets. Renders fly-through videos along a camera path using OpenGL instanced drawing and a two-pass depth-accumulation / tone-mapping pipeline.
 
