@@ -2,7 +2,9 @@
 
 <br>
 
-<img src="./examples/images/ex_img_2.png" alt="Qt renderer example" style="width: 70%; margin: auto; display: block;"/>
+<p align="center">
+    <img src="./examples/images/ex_img_2.png" alt="Qt renderer example" style="width: 90%; margin: auto; display: flex;"/>
+</p>
 
 <br>
 
