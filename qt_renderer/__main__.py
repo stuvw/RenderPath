@@ -338,7 +338,7 @@ class MainWindow(QMainWindow):
             self.le_cam.setText(path)
 
     def _browse_video(self):
-        path, _ = QFileDialog.getSaveFileName(self, "Output video", "output.mp4", "MP4 (*.mp4);;All (*)")
+        path, _ = QFileDialog.getSaveFileName(self, "Output video", "output.mp4", "MP4 (*.mp4);MKV (*.mkv);;All (*)")
         if path:
             self.le_video.setText(path)
 

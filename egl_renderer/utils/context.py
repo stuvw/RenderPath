@@ -1,9 +1,13 @@
 import ctypes
+from time import time
 from OpenGL import EGL
+from OpenGL import GL
 
 # ---------------- EGL CONTEXT ----------------
 
 def create_egl_context(width, height):
+    print("[INFO]: Creating EGL context...", end='', flush=True)
+    start = time()
     display = EGL.eglGetDisplay(EGL.EGL_DEFAULT_DISPLAY)
     major, minor = ctypes.c_int(), ctypes.c_int()
     EGL.eglInitialize(display, major, minor)
@@ -26,4 +30,9 @@ def create_egl_context(width, height):
     ctx_attribs = [EGL.EGL_CONTEXT_MAJOR_VERSION, 3, EGL.EGL_CONTEXT_MINOR_VERSION, 3, EGL.EGL_NONE]
     ctx = EGL.eglCreateContext(display, config, EGL.EGL_NO_CONTEXT, (EGL.EGLint * len(ctx_attribs))(*ctx_attribs))
     EGL.eglMakeCurrent(display, surface, surface, ctx)
+    print(f" Done ({int((time()-start)*1000)}ms)")
+
+    print(f"[INFO]: EGL version: {major.value}.{minor.value}")
+    print(f"[INFO]: OpenGL version: {GL.glGetString(GL.GL_VERSION).decode()}")
+    print(f"[INFO]: Renderer: {GL.glGetString(GL.GL_RENDERER).decode()}")
     return display, surface, ctx

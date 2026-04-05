@@ -10,11 +10,10 @@
 
 GPU-accelerated volume renderer for large particle/AMR datasets. Renders fly-through videos along a camera path using OpenGL instanced drawing and a two-pass depth-accumulation / tone-mapping pipeline.
 
-Three entry points, one workflow:
+Two renderers, one workflow:
 
 - **`python -m qt_renderer`** — interactive GUI for previewing data and tweaking render parameters on your local machine.
-- **`python -m egl_renderer`** — headless EGL renderer for standard (non-VR) production renders on a remote server (no display required).
-- **`python -m egl_renderer_vr`** — headless EGL renderer for immersive video: VR360 equirectangular or VR180 domemaster fisheye output (no display required).
+- **`python -m egl_renderer`** — headless EGL renderer for standard and VR (180 and 360) production renders on a remote server (no display required).
 
 ---
 
@@ -62,7 +61,7 @@ px py pz   cx cy cz   nx ny nz
 ```
 px py pz   fx fy fz
 ```
-`(fx, fy, fz)` is the forward/zenith direction — the centre of the fisheye circle. It need not be unit length.
+`(fx, fy, fz)` is the forward/zenith direction — the centre of the fisheye circle.
 
 **`egl_renderer_vr` — VR360 mode** — three floats per row (position only; all directions are captured):
 ```
@@ -82,17 +81,21 @@ px py pz
 - psutil *(optional, recommended)*
 - ffmpeg on PATH
 - OpenGL 3.3 Core Profile GPU
-- EGL (headless renderers only)
+- EGL (headless renderer only)
 
 ## Installation
 
 **Clone github repo:**
 
-`git clone git@github.com:stuvw/RenderPath.git`
+```bash
+git clone git@github.com:stuvw/RenderPath.git
+```
 
 **Change directory into repo:**
 
-`cd RenderPath`
+```bash
+cd RenderPath
+```
 
 **Create a Python virtual environment:**
 
@@ -198,7 +201,9 @@ Sets the pixel dimensions and framerate used for video export only. Independent 
 
 ### Export panel
 
-Choose an output `.mp4/.mkv` path and click **RENDER VIDEO**. Export uses `libx264` by default. Progress is shown in the status bar. Click **CANCEL** to abort mid-render. It is recommended to use a GPU-based video encoder like `hevc_nvenc` when it is available, as it will offload a lot of work off the CPU ( replace `"-c:v", "libx264", "-crf", "22", "-preset", "fast",` with `'-c:v', 'hevc_nvenc', '-preset', 'p7', '-cq', '22',` ).
+Choose an output `.mp4/.mkv` path and click **RENDER VIDEO**. Export uses `libx264` by default. Progress is shown in the status bar. Click **CANCEL** to abort mid-render.
+
+**NOTE:** If you know a thing or two about ffmpeg, I recommend switching the encoder to a GPU hardware accelerated one, if your system supports it, as it will greatly offload work off the CPU.
 
 ---
 
@@ -208,6 +213,7 @@ Intended for final standard renders on GPU servers where no display is available
 
 ```bash
 python -m egl_renderer \
+    --mode normal \
     --data-file   simulation.bin \
     --camera-file path.txt \
     --video-file  out.mp4 \
@@ -220,77 +226,83 @@ python -m egl_renderer \
     --undercolor 0 0 0 1 \
     --overcolor  1 1 1 1 \
     --badcolor   1 0 1 1 \
+    --hwaccel none \
+    --encoder libx264
 ```
-
-Uses `hevc_nvenc` (NVIDIA hardware H.265 encoder) by default. Swap `-c:v` in the ffmpeg command array if your server has different hardware (e.g. for AMD: [hevc_amf](https://trac.ffmpeg.org/wiki/Hardware/AMF), for Intel: [qsv](https://trac.ffmpeg.org/wiki/Hardware/QuickSync)). If you do not wish to use hardware-accelerated encoding, you can replace the line `'-c:v', 'hevc_nvenc', '-preset', 'p7', '-cq', '22',` with `"-c:v", "libx264", "-crf", "22", "-preset", "fast",`. See [ffmpeg codec documentation](https://ffmpeg.org/ffmpeg-codecs.html) for more detailed information.
 
 ### Full argument reference
 
 | Argument | Short | Default | Description |
 |----------|-------|---------|-------------|
+| `--mode` || `normal`| Rendering mode (normal, vr180 or vr360) |
 | `--data-file` | `-df` | required | Binary volume data file |
-| `--camera-file` | `-cf` | required | Camera path text file (9-column format) |
+| `--camera-file` | `-cf` | required | Camera path text file (9-col for normal mode, 6-col for vr180 and 3-col for vr360) |
 | `--video-file` | `-vf` | `out.mp4` | Output video path |
 | `--width` | `-wx` | `1280` | Output width in pixels |
-| `--height` | `-hy` | `720` | Output height in pixels |
+| `--height` | `-hy` | `720` | Output height in pixels (automatically calculated for vr: ÷2 for vr360, =width for vr180)|
 | `--framerate` | `-fr` | `30` | Output framerate |
 | `--minval` | | `-3.0` | Lower end of log₁₀ colormap range |
 | `--maxval` | | `3.0` | Upper end of log₁₀ colormap range |
 | `--colormap` | `-cm` | `inferno` | Matplotlib colormap name |
 | `--undercolor` | | `0 0 0 1` | RGBA color for values below min |
 | `--overcolor` | | `1 1 1 1` | RGBA color for values above max |
-| `--overcolor` | | `1 0 1 1` | RGBA color for NaN/error values |
+| `--badcolor` | | `1 0 1 1` | RGBA color for NaN/error values |
+| `--encoder` | | `x264` | Video encoder used |
+| `--hwaccel` | | `none` | Use available hardware acceleration to render the video |
 
----
-
-## VR headless usage (`egl_renderer_vr`)
+### VR usage
 
 Produces immersive video in two formats, selected via `--mode`:
 
 - **`vr360`** — equirectangular (2:1), suitable for Meta Quest and other 360° headsets. Spherical metadata is embedded automatically.
 - **`vr180`** — domemaster azimuthal-equidistant fisheye (1:1 square, 180° FOV), suitable for fulldome theatres and half-sphere VR playback.
 
-```bash
-# VR360
-python -m egl_renderer_vr \
-    --mode vr360 \
-    --data-file   simulation.bin \
-    --camera-file path_360.txt \
-    --video-file  out_360.mp4 \
-    --width 7680
-
-# VR180 / domemaster
-python -m egl_renderer_vr \
-    --mode vr180 \
-    --data-file   simulation.bin \
-    --camera-file path_180.txt \
-    --video-file  out_dome.mp4 \
-    --width 4096
-```
-
-### Full argument reference
-
-| Argument | Short | Default | Description |
-|----------|-------|---------|-------------|
-| `--mode` | | required | `vr360` or `vr180` |
-| `--data-file` | `-df` | required | Binary volume data file |
-| `--camera-file` | `-cf` | required | Camera path (3-col for vr360, 6-col for vr180) |
-| `--video-file` | `-vf` | `out.mp4` | Output video path |
-| `--width` | `-wx` | `4096` | Output width in pixels (height derived from mode: ÷2 for vr360, =width for vr180) |
-| `--framerate` | | `60` | Output framerate |
-| `--min-val` | | `-3.0` | Lower end of log₁₀ colormap range |
-| `--max-val` | | `3.0` | Upper end of log₁₀ colormap range |
-| `--colormap` | | `inferno` | Matplotlib colormap name |
-| `--undercolor` |  | `0 0 0 1` | RGBA color for values below min |
-| `--overcolor` | | `1 1 1 1` | RGBA color for values above max |
-| `--overcolor` | | `1 0 1 1` | RGBA color for NaN/error values |
-
-### Output formats
+**Output formats**
 
 | Mode | Aspect | Resolution example | Headset |
 |------|--------|--------------------|---------|
 | `vr360` | 2:1 | 7680 × 3840 (8K) | Meta Quest, YouTube VR, any 360° player |
 | `vr180` | 1:1 | 4096 × 4096 (4K) | Fulldome theatres, half-sphere VR |
+
+### Video Encoding & Hardware Acceleration
+
+This application uses FFmpeg to stitch OpenGL frames into a video file. Because performance varies significantly across different operating systems and hardware configurations, you can customize the encoding pipeline using two main flags.
+
+For a deep dive into available options, refer to the [FFmpeg Codec Documentation](https://ffmpeg.org/ffmpeg-codecs.html).
+
+1. **Choosing a Video Encoder (`--encoder`)**
+
+The encoder determines the compression efficiency and visual quality. Use the --encoder flag to select one of the following:
+
+| Encoder name | Argument | Best Use Case | Notes |
+|--------------|----------|---------------|-------|
+| **AVC / [libx264](https://trac.ffmpeg.org/wiki/Encode/H.264)** | `x264` | Standard (Up to 1080p) | The default choice. Highly compatible and reliable, but slower at high resolutions.|
+| **HEVC / [libx265](https://trac.ffmpeg.org/wiki/Encode/H.265)** | `x265` | High Res (4K+) | Great for high-fidelity renders; provides better compression than x264. |
+| **AV1 / [libsvtav1](https://trac.ffmpeg.org/wiki/Encode/AV1#SVT-AV1)** | `av1` | Ultra-High Res | The most modern codec. Superior efficiency, though it requires more CPU power. |
+
+2. **Hardware Acceleration (`--hwaccel`)**
+
+By default, encoding is performed by your CPU (Software Encoding). To speed up the process and reduce CPU load, you can offload the work to your GPU using the `--hwaccel` flag.
+
+**Note**: Hardware encoders are extremely fast but may offer slightly lower "quality-per-bitrate" than software encoders.
+
+Available hardware interfaces depend on your GPU vendor:
+
+| Vendor | Encoder | Argument |
+|--------|---------|----------|
+| **NVIDIA** | [NVENC](https://docs.nvidia.com/video-technologies/video-codec-sdk/13.0/ffmpeg-with-nvidia-gpu/index.html) | `nvenc` |
+| **AMD** | [AMF](https://trac.ffmpeg.org/wiki/Hardware/AMF) | `amf` |
+| **Intel** | [QSV](https://trac.ffmpeg.org/wiki/Hardware/QuickSync) | `qsv` |
+
+If you are unsure what your specific build of FFmpeg supports, run the following command in your terminal:
+
+```bash
+ffmpeg -encoders
+```
+
+You can also check what encoders are supported based on your platform [here](https://trac.ffmpeg.org/wiki/HWAccelIntro).
+
+Video encoding is very tricky to set up, and is an endless rabbit hole (especially hardware encoding), so I cannot guarantee that it will work for you.
 
 ---
 
@@ -299,7 +311,7 @@ python -m egl_renderer_vr \
 1. Run `python -m qt_renderer` locally. Use the POINTS slider at ~10 % and scrub through the camera path to check framing, colormap range, and pacing.
 2. Adjust min/max, colormap, under/over colors until the preview looks right.
 3. Note the parameter values. If VRAM is tight locally, use the MAX POINTS cap to stay within limits — the preview is still representative.
-4. SSH to your render server. Run `egl_renderer` or `egl_renderer_vr` with the same parameter values at full resolution against the full unsampled dataset.
+4. SSH to your render server. Run `egl_renderer` with the same parameter values at full resolution against the full unsampled dataset.
 
 ---
 

@@ -8,6 +8,7 @@ uniform mat4 view;
 uniform float globalScale;
 out vec3 vWorldPosition;
 flat out vec2 vDataValue;
+
 void main() {
     vec3 worldPos = (position * globalScale * posScale.w) + posScale.xyz;
     vWorldPosition = worldPos;
