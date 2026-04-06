@@ -4,7 +4,7 @@ from tqdm import tqdm
 from OpenGL.GL import *
 from OpenGL.GL import shaders
 
-from egl_renderer.utils.context import create_egl_context
+from egl_renderer.utils.context import create_context
 from egl_renderer.utils.shaders import (
     VERTEX_SHADER_DEPTH, FRAGMENT_SHADER_DEPTH,
     SCREEN_VERTEX_SHADER, SCREEN_FRAGMENT_SHADER,
@@ -34,7 +34,7 @@ def render_normal(width, height, framerate, data_file, camera_file, video_file,
     """
 
 
-    create_egl_context(width, height)
+    create_context(width, height)
 
     # ── Shaders ────────────────────────────────────────────────────────────────
     print("[INFO]: Compiling shaders...", end='', flush=True)

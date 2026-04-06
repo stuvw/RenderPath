@@ -1,3 +1,4 @@
+import sys
 import ctypes
 from time import time
 import os
@@ -6,6 +7,17 @@ os.environ['PYOPENGL_PLATFORM'] = 'egl'
 
 from OpenGL import EGL
 from OpenGL import GL
+
+def create_context(width, height):
+    # 1. Try EGL first if we are on Linux (Best for headless servers)
+    if sys.platform.startswith("linux"):
+        try:
+            return create_egl_context(width, height)
+        except Exception as e:
+            print(f"[WARN]: EGL failed, falling back to GLFW: {e}")
+
+    # 2. Use GLFW for MacOS, Windows, or Linux with a Desktop Environment
+    return create_glfw_context(width, height)
 
 # ---------------- EGL CONTEXT ----------------
 
@@ -60,3 +72,45 @@ def create_egl_context(width, height):
     print(f"[INFO]: OpenGL version: {GL.glGetString(GL.GL_VERSION).decode()}")
     print(f"[INFO]: Renderer: {GL.glGetString(GL.GL_RENDERER).decode()}")
     return display, surface, ctx
+
+# --------------- GLFW CONTEXT ----------------
+
+def create_glfw_context(width, height):
+    import glfw
+    print("[INFO]: Initializing GLFW...", end='', flush=True)
+    start = time()
+
+    if not glfw.init():
+        raise RuntimeError("GLFW could not be initialized")
+
+    # 1. Configure Window Hints for Offscreen Rendering
+    # This tells GLFW not to actually show a window on the taskbar/dock
+    glfw.window_hint(glfw.VISIBLE, glfw.FALSE)
+    
+    # 2. Set OpenGL Version (3.3 Core Profile)
+    glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
+    glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
+    glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
+    
+    # 3. MacOS Specific Compatibility
+    if sys.platform == "darwin":
+        glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, GL.GL_TRUE)
+
+    # 4. Create the Window (The Context Container)
+    window = glfw.create_window(width, height, "Offscreen Context", None, None)
+    
+    if not window:
+        glfw.terminate()
+        raise RuntimeError("Failed to create GLFW window")
+
+    # 5. Bind the Context to the Current Thread
+    glfw.make_context_current(window)
+
+    print(f" Done ({int((time()-start)*1000)}ms)")
+
+    # 6. Report Environment Details
+    print(f"[INFO]: GLFW Version: {glfw.get_version_string().decode()}")
+    print(f"[INFO]: OpenGL Version: {GL.glGetString(GL.GL_VERSION).decode()}")
+    print(f"[INFO]: Renderer: {GL.glGetString(GL.GL_RENDERER).decode()}")
+
+    return window

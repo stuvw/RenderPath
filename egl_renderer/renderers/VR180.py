@@ -4,7 +4,7 @@ from tqdm import tqdm
 from OpenGL.GL import *
 from OpenGL.GL import shaders
 
-from egl_renderer.utils.context import create_egl_context
+from egl_renderer.utils.context import create_context
 from egl_renderer.utils.geometry import perspective, build_dome_basis
 from egl_renderer.utils.shaders import (
     VERTEX_SHADER_DEPTH, FRAGMENT_SHADER_DEPTH,
@@ -39,7 +39,7 @@ def render_180(width, height, framerate, data_file, camera_file, video_file,
         print(f"[WARN]: Domemaster output must be square. Adjusting height to {width}.")
         height = width
 
-    create_egl_context(width, height)
+    create_context(width, height)
 
     # ── Shaders ────────────────────────────────────────────────────────────────
     print("[INFO]: Compiling shaders...", end='', flush=True)

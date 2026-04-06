@@ -4,7 +4,7 @@ from tqdm import tqdm
 from OpenGL.GL import *
 from OpenGL.GL import shaders
 
-from egl_renderer.utils.context import create_egl_context
+from egl_renderer.utils.context import create_context
 from egl_renderer.utils.geometry import perspective
 from egl_renderer.utils.shaders import (
     VERTEX_SHADER_DEPTH, FRAGMENT_SHADER_DEPTH,
@@ -40,7 +40,7 @@ def render_360(width, height, framerate, data_file, camera_file, video_file,
         print(f"[WARN]: 360 video requires 2:1 aspect. Adjusting height to {width // 2}.")
         height = width // 2
 
-    create_egl_context(width, height)
+    create_context(width, height)
 
     # ── Shaders ────────────────────────────────────────────────────────────────
     print("[INFO]: Compiling shaders...", end='', flush=True)

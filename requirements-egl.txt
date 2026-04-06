@@ -2,3 +2,4 @@ numpy
 PyOpenGL
 matplotlib
 tqdm
+glfw

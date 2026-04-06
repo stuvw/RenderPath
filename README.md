@@ -78,6 +78,7 @@ px py pz
 - NumPy
 - Matplotlib
 - tqdm
+- glfw
 - psutil *(optional, recommended)*
 - ffmpeg on PATH
 - OpenGL 3.3 Core Profile GPU
@@ -128,7 +129,7 @@ pip install -r requirements-qt.txt
 pip install -r requirements-all.txt
 
 # Install all dependancies manually
-pip install PyQt5 PyOpenGL numpy matplotlib tqdm psutil
+pip install PyQt5 PyOpenGL numpy matplotlib glfw tqdm psutil
 ```
 
 `psutil` is optional but strongly recommended — without it the GUI cannot warn you about memory limits before loading.
@@ -209,7 +210,7 @@ Choose an output `.mp4/.mkv` path and click **RENDER VIDEO**. Export uses `libx2
 
 ## Headless usage (`egl_renderer`)
 
-Intended for final standard renders on GPU servers where no display is available. Requires a working EGL installation.
+Intended for final standard renders on Linux GPU servers where no display is available, however, it does work on MacOS and Windows. Requires a working EGL installation when on a headless server.
 
 ```bash
 python -m egl_renderer \
