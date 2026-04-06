@@ -1,5 +1,4 @@
 import os
-os.environ['EGL_PLATFORM'] = 'surfaceless'
 
 from egl_renderer.renderers.normal import render_normal
 from egl_renderer.renderers.VR180 import render_180
@@ -8,6 +7,11 @@ from egl_renderer.utils.args import parse_args
 
 def main():
     args = parse_args()
+
+    if not os.path.isfile(args.data_file):
+        raise OSError(f"Could not open binary simulation data file: {args.data_file}")
+    if not os.path.isfile(args.camera_file):
+        raise OSError(f"Could not open camera path file: {args.camera_file}")
 
     if args.mode == "normal":
         render_normal(

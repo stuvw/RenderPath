@@ -88,7 +88,7 @@ px py pz
 **Clone github repo:**
 
 ```bash
-git clone git@github.com:stuvw/RenderPath.git
+git clone https://github.com/stuvw/RenderPath.git
 ```
 
 **Change directory into repo:**

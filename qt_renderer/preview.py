@@ -58,10 +58,12 @@ class VolumeGLWidget(QOpenGLWidget):
         self.depth_prog = shaders.compileProgram(
             shaders.compileShader(VERTEX_SHADER_DEPTH,   GL_VERTEX_SHADER),
             shaders.compileShader(FRAGMENT_SHADER_DEPTH, GL_FRAGMENT_SHADER),
+            validate=False # Stop MacOS from complaining
         )
         self.screen_prog = shaders.compileProgram(
             shaders.compileShader(SCREEN_VERTEX_SHADER,    GL_VERTEX_SHADER),
             shaders.compileShader(SCREEN_FRAGMENT_SHADER,  GL_FRAGMENT_SHADER),
+            validate=False # Same
         )
         self._build_quad()
 
@@ -80,8 +82,12 @@ class VolumeGLWidget(QOpenGLWidget):
         # is invisible inside the widget. Always use defaultFramebufferObject().
         default_fbo = self.defaultFramebufferObject()
 
+        dpr = self.devicePixelRatio()
+        rw  = round(self.width()  * dpr)
+        rh  = round(self.height() * dpr)
+
         glBindFramebuffer(GL_FRAMEBUFFER, default_fbo)
-        glViewport(0, 0, self.width(), self.height())
+        glViewport(0, 0, rw, rh)
         glClearColor(0.05, 0.05, 0.08, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
@@ -89,8 +95,7 @@ class VolumeGLWidget(QOpenGLWidget):
             return
 
         # FBO matches widget pixel dimensions exactly
-        rw = self.width()
-        rh = self.height()
+
         self._ensure_fbos(rw, rh)
 
         x, y, z, cx, cy, cz, nx, ny, nz = self.cam_frame
@@ -169,7 +174,7 @@ class VolumeGLWidget(QOpenGLWidget):
         status = glCheckFramebufferStatus(GL_FRAMEBUFFER)
         if status != GL_FRAMEBUFFER_COMPLETE:
             raise RuntimeError(f"Accumulation FBO incomplete: {status:#x}")
-        glBindFramebuffer(GL_FRAMEBUFFER, 0)
+        glBindFramebuffer(GL_FRAMEBUFFER, self.defaultFramebufferObject())
 
         self._fbo_size = (w, h)
 

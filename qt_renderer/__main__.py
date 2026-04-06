@@ -536,6 +536,8 @@ class MainWindow(QMainWindow):
             "overColor":  self._over_rgba,
         }
 
+        self.gl_widget.setUpdatesEnabled(False)
+
         self._render_cancel = False
         self._render_iter   = self._render_generator(gl_state, self.cam_data, params)
         self._render_timer  = QTimer(self)
@@ -698,6 +700,7 @@ class MainWindow(QMainWindow):
         self.progress_bar.setVisible(False)
         out = self.le_video.text() or "output.mp4"
         self.status.showMessage(f"✓  Render complete  ·  {out}")
+        self.gl_widget.setUpdatesEnabled(True)
 
     def _on_render_error(self, msg):
         self._render_timer.stop()
@@ -706,9 +709,11 @@ class MainWindow(QMainWindow):
         self.progress_bar.setVisible(False)
         QMessageBox.critical(self, "Render error", msg)
         self.status.showMessage(f"Render failed  ·  {msg}")
+        self.gl_widget.setUpdatesEnabled(True)
 
     def _cancel_render(self):
         self._render_cancel = True
+        self.gl_widget.setUpdatesEnabled(True)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -716,6 +721,10 @@ class MainWindow(QMainWindow):
 # ══════════════════════════════════════════════════════════════════════════════
 
 def main():
+
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
+
     # Request OpenGL 3.3 Core
     fmt = QSurfaceFormat()
     fmt.setVersion(3, 3)
