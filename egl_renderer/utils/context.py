@@ -2,10 +2,7 @@ import sys
 import ctypes
 from time import time
 import os
-os.environ['EGL_PLATFORM'] = 'surfaceless'
-os.environ['PYOPENGL_PLATFORM'] = 'egl'
 
-from OpenGL import EGL
 from OpenGL import GL
 
 def create_context(width, height):
@@ -22,6 +19,11 @@ def create_context(width, height):
 # ---------------- EGL CONTEXT ----------------
 
 def create_egl_context(width, height):
+
+    os.environ['EGL_PLATFORM'] = 'surfaceless'
+    os.environ['PYOPENGL_PLATFORM'] = 'egl'
+    from OpenGL import EGL
+
     print("[INFO]: Creating EGL context...", end='', flush=True)
     start = time()
 
@@ -76,7 +78,9 @@ def create_egl_context(width, height):
 # --------------- GLFW CONTEXT ----------------
 
 def create_glfw_context(width, height):
+
     import glfw
+
     print("[INFO]: Initializing GLFW...", end='', flush=True)
     start = time()
 

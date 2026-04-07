@@ -247,7 +247,7 @@ python -m egl_renderer \
 | `--colormap` | `-cm` | `inferno` | Matplotlib colormap name |
 | `--undercolor` | | `0 0 0 1` | RGBA color for values below min |
 | `--overcolor` | | `1 1 1 1` | RGBA color for values above max |
-| `--badcolor` | | `1 0 1 1` | RGBA color for NaN/error values |
+| `--badcolor` | | `0 0 0 0` | RGBA color for NaN/error values |
 | `--encoder` | | `x264` | Video encoder used |
 | `--hwaccel` | | `none` | Use available hardware acceleration to render the video |
 

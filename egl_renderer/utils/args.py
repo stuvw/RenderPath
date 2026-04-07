@@ -28,7 +28,7 @@ def parse_args():
                             help="Color for data under the minimum")
     palette_group.add_argument("--overcolor", "-oc", type=float, nargs=4, default=(1,1,1,1),
                             help="Color for data over the maximum")
-    palette_group.add_argument("--badcolor", "-bc", type=float, nargs=4, default=(1,0,1,1),
+    palette_group.add_argument("--badcolor", "-bc", type=float, nargs=4, default=(0,0,0,0),
                             help="Color for NaN/error data")
     palette_group.add_argument("--colormap", "-cm", type=str, default="inferno",
                             help="Matplotlib colormap to choose")

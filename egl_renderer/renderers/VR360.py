@@ -48,10 +48,14 @@ def render_360(width, height, framerate, data_file, camera_file, video_file,
 
     depth_prog = shaders.compileProgram(
         shaders.compileShader(VERTEX_SHADER_DEPTH, GL_VERTEX_SHADER),
-        shaders.compileShader(FRAGMENT_SHADER_DEPTH, GL_FRAGMENT_SHADER))
+        shaders.compileShader(FRAGMENT_SHADER_DEPTH, GL_FRAGMENT_SHADER),
+        validate=False
+        )
     equirect_prog = shaders.compileProgram(
         shaders.compileShader(SCREEN_VERTEX_SHADER, GL_VERTEX_SHADER),
-        shaders.compileShader(EQUIRECT_FRAGMENT_SHADER, GL_FRAGMENT_SHADER))
+        shaders.compileShader(EQUIRECT_FRAGMENT_SHADER, GL_FRAGMENT_SHADER),
+        validate=False
+        )
 
     print(f" Done ({int((time()-t)*1000)}ms)")
 
